@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guest list for Petersfest: Hodge Theory in Leiden</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .guest-list {
+            margin: 20px;
+        }
+        .guest-list h1 {
+            font-size: 24px;
+        }
+        .guest-list ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .guest-list li {
+            margin: 5px 0;
+        }
+     #passwordPrompt {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+    </style>
+    <script>
+        function checkPassword() {
+            const answer = document.getElementById('answer').value.toLowerCase();
+            if (answer === 'period') {
+                document.getElementById('passwordPrompt').style.display = 'none';
+                document.getElementById('guestList').style.display = 'block';
+            } else {
+                alert('Incorrect answer. Please try again.');
+            }
+        }
+    </script></head>
+<body>
+    <div id="passwordPrompt">
+        <h1>What is a mathematical term for a domain related to Chris Peters and to the end of a sentence?</h1>
+        <input type="text" id="answer" placeholder="Enter your answer">
+        <button onclick="checkPassword()">Submit</button>
+    </div>
+    <div id="guestList" style="display: none;">
+        <div class="guest-list">
+        <h1>Guest list for Petersfest: Hodge Theory in Leiden<br>A Conference in Honour of Chris Peters' 75th Birthday</h1>
+        <ul>
+            <li>Nikolas Adaloglou</li>
+            <li>Arnaud Beauville</li>
+            <li>Martin Bright</li>
+            <li>Emma Brakkee</li>
+            <li>Nero Budur</li>
+            <li>Remy van Dobben de Bruyn</li>
+            <li>Frans Oort</li>
+            <li>Federica Galluzzi</li>
+            <li>Olivier de Gaay Fortman</li>
+            <li>Gert Heckman</li>
+            <li>David Holmes</li>
+            <li>Martijn Kool</li>
+            <li>Remke Kloosterman</li>
+            <li>Francesca Leonardi</li>
+            <li>Eduard Looijenga</li>
+            <li>Ben Moonen</li>
+            <li>Jan Nagel</li>
+            <li>Georgios Politopoulos</li>
+            <li>Gregory Pearlstein</li>
+            <li>Ulf Persson</li>
+            <li>Aakash Gopinath</li>
+            <li>Robin de Jong</li>
+            <li>Hans Sterk</li>
+            <li>Dirk Siersma</li>
+            <li>Alessandra Sarti</li>
+            <li>Matthias Sch&uuml;tt</li>
+            <li>Jan Stienstra</li>
+            <li>Gert Heckman</li>
+            <li>Miles Reid</li>
+            <li>Robert Laterveer</li>
+            <li>Lenny Taelman</li>
+            <li>Duco van Straten</li>
+            <li>Jan Top</li>
+            <li>Mingmin Shen</li>
+            <li>Robin de Jong</li>
+            <li>Olivier de Gaay Fortman</li>
+            <li>Ruijie Yang</li>
+            <li>Aline Zanardini</li>
+            <li>Yajnaseni Dutta</li>
+            <li>Stijn Velstra</li>
+        </ul>
+    </div>
+</body>
+</html>
