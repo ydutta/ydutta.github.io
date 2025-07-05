@@ -2,55 +2,69 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-.collapsible {
-  background-color: white;
-  color:  #2874a6;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  border: none;
-  text-align: left;
-  outline: none;
-  font-size: 18px;
+<style type="text/css">
+/* Style the collapsible button */
+button.collapsible {
+    background-color: #f1f1f1;
+    color: #444;
+    cursor: pointer;
+    padding: 10px;
+    width: 100%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 25px;
 }
 
-.active, .collapsible:hover {
-  background-color:  #f2f3f4;
+button.collapsible:hover {
+    background-color: #ddd;
 }
 
-.content {
-  padding: 0 18px;
-  display: none;
-  overflow: hidden;
-  background-color: #add4ed;
+button.collapsible:active {
+    background-color: #ccc;
+}
+
+/* Style the collapsible content */
+div.content {
+    padding: 0 18px;
+    display: none; /* Hidden by default */
+    overflow: hidden;
+    background-color: #f9f9f9;
+}
+
+div.content.active {
+    display: block; /* Show content when active */
 }
 </style>
+<script type="text/javascript">
+<!--
+var arxiv_authorid = "0000-0002-8658-8911";
+var arxiv_max_entries="2";
+var arxiv_includeSummary = "1";
+//--></script>
 <style>
-.responsiveCal {
-position: relative; padding-bottom: 75%; height: 0; overflow: hidden;
-}
- 
-.responsiveCal iframe {
-position: absolute; top:0; left: 0; width: 100%; height: 100%;
-}
-
-@media all and (min-width: 768px) {
-    .deskContent {display:block;}
-    .phoneContent {display:none;}
-}
-
-@media all and (max-width: 767px) {
-    .deskContent {display:none;}
-    .phoneContent {display:block;}
+div#arxivfeed {
+     background-color: #f1f1f1;
+    color: #444;
+    cursor: pointer;
+    padding: 10px;
+    width: 80%;
+    border: none;
+    text-align: left;
+    outline: none;
+    font-size: 25px;
 }
 </style>
+<script type="text/javascript" src="https://arxiv.org/js/myarticles.js">
+</script>
+
 </head>
+
 <body>
 
 <div>   
 <h1>Yajnaseni Dutta</h1>
-<h7>Informally: Yagna</h7>
+<h4> Informally: Yagna</h4>
 
 <p>
 <img style="float: left; margin-right: 10px" src="images/yd.jpg" name="Grafik1" width="300" height="250" alt="Foto Dutta">
@@ -64,12 +78,14 @@ Office BW2.34, Einsteinweg 55
 </div>
 
 <div>
-<p>I am a tenured assistant professor (UD) at the Mathematical Institute of the University of Leiden. My official website is <a href="https://www.universiteitleiden.nl/en/staffmembers/yajnaseni-dutta#tab-1">here</a>. Before this, I was a Postdoc/associate member at the Hausdorff Center for Mathematics and the University of Bonn working in the complex geometry group of <a href="http://www.math.uni-bonn.de/~huybrech/"> Prof. Daniel Huybrechts</a>. Here is my <a href="pdfs/d-cv.pdf" target="_blank">CV</a>.</p></div>
+<p>I am a tenured assistant professor (UD) at the Mathematical Institute of the University of Leiden. My official website is <a href="https://www.universiteitleiden.nl/en/staffmembers/yajnaseni-dutta#tab-1"> here.</a> 
+Before this, I was a Postdoc/associate member at the Hausdorff Center for Mathematics and the University of Bonn.  Here is my <a href="pdfs/d-cv.pdf" target="_blank">CV</a>.
+</p></div>
 
-<button type="button" class="collapsible">Research Interests</button>
+<button type="button" class="collapsible">Research </button>
 <div class="content">
-<p>Birational geometry, Hyperk&auml;hler geometry, generic vanishing theory, Hodge modules and Hodge theory. </p>
-</div>
+<p>Research Interest: 
+Birational geometry, Hyperk&auml;hler geometry, generic vanishing theory, Hodge modules and Hodge theory. </p>
 
 <button type="button" class="collapsible">Publications and Preprints</button>
 <div class="content">
@@ -118,12 +134,27 @@ Office BW2.34, Einsteinweg 55
 
 <button type="button" class="collapsible">Teaching</button>
 <div class="content">
+<button type="button" class="collapsible">Visiting</button>
+<div class="content">
+<ul>
+<li><a href="https://sites.google.com/view/2025summerinstitute/home">Summer Institute in Algebraic Geometry</a>, participating Jul 20 - Aug 2, 2025</li>
+<li><a href="https://math.ruhr-uni-bochum.de/fakultaet/arbeitsbereiche/analysis/research-team-gachet/events/"> D-modules in Bochum</a>, March 5-7, 2025 </li>
+<li><a href="https://agmp.sites.sheffield.ac.uk/conferences/hk-days-2025"> HK days in Sheffield</a>, February 12-18, 2025</li>
+<li><a href="https://moduli-2024.ncag.info/"> 
+Modern Methods in Moduli</a> workshop at the University of Luxembourg, November 26-28, 2024</li>
+</ul>
+</div>
+
+
+<button type="button" class="collapsible">Teaching</button>
+<div class="content">
 
 <ul>
-<li> (Leiden) Spring 2025: Co-instructor (with de Smit): <a href="", target="_blank"> Representation Theory </a></li>
-<li> (mastermath/VU) Fall 2024: Co-instructor (with Brakkee): <a href="https://elo.mastermath.nl/", target="_blank"> Advanced Algebraic Geometry (mastermath): Moduli of sheaves. </a></li>
+<li> (Leiden) Autumn 2025: Instructor: <a href="", target="_blank"> Algebraic Curves </a></li>
+<li> CURRENT: (Leiden) Spring 2025: Co-instructor (with de Smit): <a href="", target="_blank"> Representation Theory </a></li>
+<li> (mastermath/VU) Autumn 2024: Co-instructor (with Brakkee): <a href="https://elo.mastermath.nl/", target="_blank"> Advanced Algebraic Geometry (mastermath): Moduli of sheaves. </a></li>
 <li> (LUC) Spring 2024 (Q4): Co-instructor (with Akeyr, Capannoli, Logothetis, van Cleemput): <a href="", target="_blank"> Mathematical Reasoning at Leiden University College </a></li>
-<li> (Leiden) Fall 2023: Co-instructor (with Herr): <a href="https://brightspace.universiteitleiden.nl/d2l/home/240423", target="_blank"> Algebraic Curves </a></li>
+<li> (Leiden) Autumn 2023: Co-instructor (with Herr): <a href="https://brightspace.universiteitleiden.nl/d2l/home/240423", target="_blank"> Algebraic Curves </a></li>
 <li> (Bonn) Winter 2022-23 & Sommer 23: Teaching Assistant:  <a href="v4a1.html"> Algebraic Geometry 1</a> & <a href="v4a2.html"> 2 </a> and <a href="s2a1.html">Hauptseminar Algebra: Klassische Algebraische Geometrie. </a></li> 
 <li> (Bonn) Wintersemester 2021-22: <a href="v5a4.html">V5A4 Selected Topics in Algebraic Geometry: Moduli of vector bundles.</a> </li>
 <li> (Bonn) Wintersemester 2020-21: <a href="s4a1.html">S4A1 Graduate Seminar in algebraic geometry: Jacobian of curves and abelian varieties.</a> 
@@ -131,20 +162,13 @@ Office BW2.34, Einsteinweg 55
  <li> Past teaching assistant at Northwestern: Calculus I, II, III, Graph theory, Algebraic Topology I, Introduction to proofs etc.
  </ul></div>
 
-<button type="button" class="collapsible">Visitors and Visiting  </button>
-<div class="content"> (updated since Sep 2023)
-<p><h3>Visitors:</h3> <b>Dominique Mattei</b>: Dec 5 - 9, 2023. <b>Evgeny Shinder</b>: Dec 5 - 8, 2023, May 8 -11, 2024, <b>Lisa Marquand</b>: July 15 - 17, 2024. </p>
-<p><h3>Visiting:</h3> <b>Radu Laza</b> (in Paris): Mar 26-27, 2024. <b>Frank Gounelas:</b> June 13-14, 2024. </p>
-<p><h3>Upcoming travels:</h3> <b>Paris (ERC HyperK seminar)</b>: June 17-18,2024, <b>Princeton (WIAG)</b>: June 24 - 29, 2024. <b>Montreal (CRM conference on D-modules, local systems and applications): </b>Sep 16 - 20, 2024</p>
- </div>
-
-
-
 
 <button type="button" class="collapsible">Events</button>
 <div class="content">
 
 <ul>
+<li><a href="https://www.lorentzcenter.nl/k3-surfaces-en-friends-brauer-groups-and-moduli.html">Lorentz workshop</a>, K3 surfaces & friends: Brauer groups and moduli, 30 June - 4 July 2025 
+<li><a href="pancakes-2425.html" target="_blank">Informal Preprint Seminar (Pancakes), Fall 24</a> at University of Leiden</li>
 <li><a href="peters75.html">Hodge theory in Leiden</a>, A Conference in Honour of Chris Peters' 75th Birthday. Sep 5-6, 2024</li>
 <li><a href="icspring24.html">Intercity Reading Seminar</a> on the integral Hodge conjecture for two-dimensional Calabi-Yau categories after Perry.</li>
 <li><a href="hksymposium23.html" target="_blank">Mini-symposium</a>: around hyperk&auml;hlers and K3s, Dec 6, 2023 at Leiden University </li>
@@ -170,10 +194,8 @@ Office BW2.34, Einsteinweg 55
 <div class="content" id="links">
   <ul>
 <li> <a href="https://scholar.google.de/citations?hl=de&user=QolDMr4AAAAJ" target="_blank">Google Schloar</a></li>
-<li> <a href="https://arxiv.org/search/?searchtype=author&query=Dutta%2C+Yajnaseni" target="_blank"> ArXiv </li>
+<li> <a href="https://arxiv.org/search/?searchtype=author&query=Dutta%2C+Yajnaseni" target="_blank"> ArXiv </a></li>
 <li> <a href="https://zbmath.org/?q=dutta%2C+yajnaseni" target="_blank"> zbMATH </a> </li>
-<li> <a href="https://www.math.uni-bonn.de/ag/kompgeo/" target="_blank"> Arbeitsgruppe Komplexe Geometrie, </a> University of Bonn.</li>
-<li> <a href="https://www.mathematics.uni-bonn.de/mathematical-events" target="_blank"> Calendar </a> of math events in Bonn. </li>
 </ul>
 </div>
 
