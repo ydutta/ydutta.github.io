@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Relativpronomen – Nederlands</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1209;
+    --paper: #f5f0e8;
+    --cream: #ede7d5;
+    --accent: #c8381a;
+    --gold: #b8922a;
+    --muted: #7a6e5e;
+    --correct: #2d6a4f;
+    --wrong: #c8381a;
+    --line: #c8b99a;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1rem 4rem;
+    background-image:
+      repeating-linear-gradient(transparent, transparent 31px, var(--line) 31px, var(--line) 32px);
+    background-attachment: fixed;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    position: relative;
+  }
+
+  .header::before {
+    content: '◆ OEFENING ◆';
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    color: var(--gold);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+  }
+
+  h1 em {
+    font-style: italic;
+    color: var(--accent);
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-top: 0.5rem;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+  }
+
+  .scoreboard {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 2rem;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    padding: 0.75rem 2rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+  }
+
+  .scoreboard span { color: var(--ink); font-weight: 500; }
+
+  .card {
+    width: 100%;
+    max-width: 680px;
+    background: white;
+    border: 1px solid var(--line);
+    box-shadow: 4px 4px 0 var(--line);
+    padding: 2rem 2.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    transition: all 0.2s;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gold);
+  }
+
+  .question-meta {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+  }
+
+  .sentence {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.1rem, 2.5vw, 1.35rem);
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+    color: var(--ink);
+  }
+
+  .blank {
+    display: inline-block;
+    min-width: 90px;
+    border-bottom: 2.5px solid var(--ink);
+    text-align: center;
+    font-family: 'DM Mono', monospace;
+    font-size: 1rem;
+    font-weight: 500;
+    vertical-align: bottom;
+    color: var(--accent);
+    padding: 0 0.4rem;
+    transition: all 0.25s;
+  }
+
+  .blank.filled { color: var(--correct); border-color: var(--correct); }
+  .blank.wrong { color: var(--wrong); border-color: var(--wrong); }
+
+  .hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 1.5rem;
+    padding-left: 0.5rem;
+    border-left: 2px solid var(--line);
+  }
+
+  .options {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .opt-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    cursor: pointer;
+    text-align: left;
+    letter-spacing: 0.03em;
+    transition: all 0.15s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .opt-btn .letter {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-right: 0.6rem;
+  }
+
+  .opt-btn:hover:not(:disabled) {
+    background: var(--cream);
+    border-color: var(--gold);
+    transform: translateX(2px);
+    box-shadow: -3px 0 0 var(--gold);
+  }
+
+  .opt-btn:disabled { cursor: default; }
+
+  .opt-btn.correct {
+    background: #e8f5ee;
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+
+  .opt-btn.wrong {
+    background: #fdf0ee;
+    border-color: var(--wrong);
+    color: var(--wrong);
+    text-decoration: line-through;
+  }
+
+  .opt-btn.reveal {
+    background: #e8f5ee;
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+
+  .feedback {
+    margin-top: 1.25rem;
+    padding: 1rem 1.25rem;
+    border-left: 3px solid;
+    font-size: 0.88rem;
+    line-height: 1.6;
+    display: none;
+  }
+
+  .feedback.show { display: block; }
+  .feedback.correct-fb { border-color: var(--correct); background: #eaf5ee; color: #1d4e35; }
+  .feedback.wrong-fb { border-color: var(--wrong); background: #fdf0ee; color: #7a1a0a; }
+
+  .feedback strong {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.05em;
+  }
+
+  .nav {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 1rem;
+  }
+
+  .nav-btn {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.8rem;
+    letter-spacing: 0.08em;
+    padding: 0.65rem 1.5rem;
+    border: 1.5px solid var(--ink);
+    background: var(--ink);
+    color: var(--paper);
+    cursor: pointer;
+    text-transform: uppercase;
+    transition: all 0.15s;
+  }
+
+  .nav-btn:hover { background: var(--accent); border-color: var(--accent); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+  .nav-btn.secondary { background: transparent; color: var(--ink); }
+  .nav-btn.secondary:hover { background: var(--cream); }
+
+  .progress-bar {
+    width: 100%;
+    max-width: 680px;
+    height: 3px;
+    background: var(--line);
+    margin-bottom: 1.5rem;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s ease;
+  }
+
+  .result-screen {
+    width: 100%;
+    max-width: 680px;
+    text-align: center;
+    padding: 3rem 2rem;
+    background: white;
+    border: 1px solid var(--line);
+    box-shadow: 4px 4px 0 var(--line);
+    display: none;
+  }
+
+  .result-screen.show { display: block; }
+
+  .result-score {
+    font-family: 'Playfair Display', serif;
+    font-size: 5rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    margin: 1rem 0;
+  }
+
+  .result-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .result-msg {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--muted);
+    margin: 1rem 0 2rem;
+  }
+
+  .category-tag {
+    display: inline-block;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    padding: 0.2rem 0.6rem;
+    background: var(--cream);
+    border: 1px solid var(--line);
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+
+  .game-area { width: 100%; max-width: 680px; }
+
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card { animation: slideIn 0.3s ease; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Relatieve<br><em>Voornaamwoorden</em></h1>
+  <p class="subtitle">Vul het juiste betrekkelijk voornaamwoord in</p>
+</div>
+
+<div class="scoreboard">
+  VRAAG <span id="qnum">1</span> / <span id="qtotal">—</span>
+  &nbsp;&nbsp;|&nbsp;&nbsp;
+  SCORE <span id="score">0</span>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="progress"></div></div>
+
+<div class="game-area" id="gameArea">
+  <div class="card" id="questionCard">
+    <div class="question-meta" id="category"></div>
+    <div class="sentence" id="sentenceDisplay"></div>
+    <div class="hint" id="hintDisplay"></div>
+    <div class="options" id="optionsGrid"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="nav">
+      <button class="nav-btn" id="nextBtn" disabled onclick="nextQuestion()">Volgende →</button>
+      <button class="nav-btn secondary" id="skipBtn" onclick="skipQuestion()">Overslaan</button>
+    </div>
+  </div>
+</div>
+
+<div class="result-screen" id="resultScreen">
+  <div class="result-label">Eindresultaat</div>
+  <div class="result-score" id="finalScore"></div>
+  <div class="result-msg" id="finalMsg"></div>
+  <button class="nav-btn" onclick="restartGame()">Opnieuw spelen</button>
+</div>
+
+<script>
+const questions = [
+  // DAT (de-word neuter / het-word)
+  {
+    cat: "DAT — het-woord",
+    sentence: "Het boek ___ ik gisteren kocht, is al uitverkocht.",
+    answer: "dat",
+    options: ["dat", "die", "wat", "welk"],
+    hint: "Betrekking op een het-woord (het boek) in een beperkende bijzin.",
+    explanation: "<strong>DAT</strong> gebruik je bij <em>het</em>-woorden: 'het boek <u>dat</u> ik kocht'. Bij <em>de</em>-woorden gebruik je 'die'."
+  },
+  {
+    cat: "DIE — de-woord",
+    sentence: "De vrouw ___ naast me woont, spreekt drie talen.",
+    answer: "die",
+    options: ["dat", "die", "wat", "wie"],
+    hint: "Betrekking op een de-woord (de vrouw) in een beperkende bijzin.",
+    explanation: "<strong>DIE</strong> gebruik je bij <em>de</em>-woorden en bij meervoud: 'de vrouw <u>die</u> naast me woont'."
+  },
+  {
+    cat: "DAT vs DIE — meervoud",
+    sentence: "De kinderen ___ buiten spelen, zijn mijn neven.",
+    answer: "die",
+    options: ["dat", "die", "wat", "welke"],
+    hint: "Meervoud gebruikt altijd hetzelfde relatief pronomen, ongeacht het geslacht.",
+    explanation: "<strong>DIE</strong> gebruik je altijd bij meervoud: 'de kinderen <u>die</u> buiten spelen'. Meervoud gebruikt nooit 'dat'."
+  },
+  // WAT
+  {
+    cat: "WAT — onbepaald antecedent",
+    sentence: "Alles ___ hij zei, was onwaar.",
+    answer: "wat",
+    options: ["dat", "die", "wat", "welk"],
+    hint: "'Alles', 'niets', 'iets', 'veel', 'weinig' → onbepaald antecedent.",
+    explanation: "<strong>WAT</strong> gebruik je na onbepaalde voornaamwoorden als <em>alles, niets, iets, veel, weinig</em>: 'alles <u>wat</u> hij zei'."
+  },
+  {
+    cat: "WAT — hele zin als antecedent",
+    sentence: "Hij is geslaagd, ___ me erg blij maakt.",
+    answer: "wat",
+    options: ["dat", "die", "wat", "hetgeen"],
+    hint: "Het antecedent is de hele vorige zin, niet één woord.",
+    explanation: "<strong>WAT</strong> verwijst naar een hele zin of situatie: 'hij is geslaagd, <u>wat</u> me blij maakt'. 'Hetgeen' is formeel en minder gebruikelijk."
+  },
+  {
+    cat: "WAT — superlatief",
+    sentence: "Het mooiste ___ ik ooit heb gezien, was de aurora borealis.",
+    answer: "wat",
+    options: ["dat", "die", "wat", "wie"],
+    hint: "Na superlatieven met 'het' als antecedent gebruik je 'wat'.",
+    explanation: "<strong>WAT</strong> volgt na superlatieven: 'het mooiste <u>wat</u> ik ooit zag'. Vergelijk: 'de mooiste stad <u>die</u> ik ooit zag'."
+  },
+  // WAAR + prepositie
+  {
+    cat: "WAAR + prepositie (over)",
+    sentence: "Het onderwerp ___ we het hebben, is heel complex.",
+    answer: "waarover",
+    options: ["waarover", "over dat", "over die", "over wat"],
+    hint: "Preposities kunnen niet vóór 'dat/die' staan. Gebruik 'waar' + prepositie.",
+    explanation: "<strong>WAAROVER</strong> = 'over + dat/welk'. Preposities combineer je met 'waar-': <em>waarover, waarmee, waarvan, waardoor</em> enz."
+  },
+  {
+    cat: "WAAR + prepositie (mee)",
+    sentence: "De pen ___ ik dit heb geschreven, is van mijn opa.",
+    answer: "waarmee",
+    options: ["waarmee", "met die", "met dat", "womit"],
+    hint: "'met' + betrekkelijk voornaamwoord → 'waar' + 'mee'.",
+    explanation: "<strong>WAARMEE</strong>: 'de pen <u>waarmee</u> ik schrijf'. De prepositie 'met' wordt gecombineerd met 'waar': <em>waar + mee = waarmee</em>."
+  },
+  {
+    cat: "WAAR + prepositie (in)",
+    sentence: "De stad ___ ik geboren ben, heet Leiden.",
+    answer: "waarin",
+    options: ["waarin", "in die", "in dat", "in waar"],
+    hint: "Plaatsbepaling: 'in' + betrekkelijk voornaamwoord.",
+    explanation: "<strong>WAARIN</strong>: 'de stad <u>waarin</u> ik geboren ben'. Let op: bij personen gebruik je <em>in wie</em> (bijv. 'de persoon in wie ik vertrouwen heb')."
+  },
+  {
+    cat: "WAAR + prepositie (voor)",
+    sentence: "Dat is precies het probleem ___ ik je voor heb gewaarschuwd.",
+    answer: "waarvoor",
+    options: ["waarvoor", "voor dat", "voor die", "voor wat"],
+    hint: "Gesplitst of samengevoegd: 'waar...voor' of 'waarvoor'.",
+    explanation: "<strong>WAARVOOR</strong>: 'het probleem <u>waarvoor</u> ik gewaarschuwd heb'. Je kunt ook splitsen: 'het probleem <em>waar</em> ik voor gewaarschuwd heb'."
+  },
+  // PREPOSITIE + WIE
+  {
+    cat: "Prepositie + WIE (persoon)",
+    sentence: "De collega met ___ ik samenwerk, is erg competent.",
+    answer: "wie",
+    options: ["wie", "welke", "dat", "die"],
+    hint: "Bij personen + prepositie gebruik je altijd 'wie', nooit 'waar'.",
+    explanation: "<strong>MET WIE</strong>: bij personen gebruik je altijd <em>prepositie + wie</em>: 'de collega <u>met wie</u> ik werk'. Nooit 'waarmee' voor personen."
+  },
+  {
+    cat: "Prepositie + WIE (over)",
+    sentence: "De auteur over ___ we het hadden, heeft een nieuwe roman uitgebracht.",
+    answer: "wie",
+    options: ["wie", "welke", "wat", "dat"],
+    hint: "Persoon als antecedent + prepositie → 'prepositie + wie'.",
+    explanation: "<strong>OVER WIE</strong>: 'de auteur <u>over wie</u> we spraken'. Vergelijk: 'het boek <u>waarover</u> we spraken' (niet-persoon → waar + prepositie)."
+  },
+  // DIT vs DAT
+  {
+    cat: "DIT als aanwijzend (niet relatief)",
+    sentence: "___ is het boek dat ik bedoelde.",
+    answer: "Dit",
+    options: ["Dit", "Dat", "Die", "Dat wat"],
+    hint: "Aanwijzend voornaamwoord voor iets dichtbij (nabij de spreker).",
+    explanation: "<strong>DIT</strong> = aanwijzend voornaamwoord voor iets nabij. <em>Dat</em> = iets verder weg. Let op: 'dit/dat' als aanwijzend vnw. zijn GEEN relatieve voornaamwoorden!"
+  },
+  {
+    cat: "DEZE vs DIE",
+    sentence: "___ man die daar staat, is mijn oom.",
+    answer: "Die",
+    options: ["Die", "Deze", "Dat", "Dit"],
+    hint: "'Deze' of 'die' als aanwijzend voornaamwoord voor een de-woord?",
+    explanation: "<strong>DIE</strong> als aanwijzend voornaamwoord verwijst naar iets verder weg. <em>Deze</em> is voor iets dichtbij. In combinatie met een zelfstandig naamwoord: <em>deze man</em> (nabij) vs <em>die man</em> (ver)."
+  },
+  // Gesplitste constructie
+  {
+    cat: "Gesplitste WAAR-constructie",
+    sentence: "De reden ___ hij zo vroeg vertrok, is onbekend.",
+    answer: "waarom",
+    options: ["waarom", "waarvoor", "om dat", "dat"],
+    hint: "'Waarom' = 'om + welke reden'. Speciale vaste combinatie.",
+    explanation: "<strong>WAAROM</strong> is een vaste combinatie: 'de reden <u>waarom</u> hij vertrok'. Net als <em>waardoor, waarmee, waarop, waaraan</em> enz."
+  },
+  {
+    cat: "WAARAAN",
+    sentence: "De baan ___ hij zo hard heeft gewerkt, heeft hij eindelijk gekregen.",
+    answer: "waaraan",
+    options: ["waaraan", "aan die", "aan dat", "waarvoor"],
+    hint: "'Werken aan iets' → prepositie 'aan' + betrekkelijk voornaamwoord.",
+    explanation: "<strong>WAARAAN</strong>: 'de baan <u>waaraan</u> hij werkte'. 'Werken aan' → 'aan' + 'waar' = <em>waaraan</em>. Vergelijk: 'de persoon <u>aan wie</u> hij werkte' (persoon)."
+  },
+  // Formeel: hetgeen / degene die
+  {
+    cat: "DEGENE DIE",
+    sentence: "___ dit heeft gedaan, moet zich melden.",
+    answer: "Degene die",
+    options: ["Degene die", "Die wat", "Wie dat", "Diegene wat"],
+    hint: "Persoon als antecedent zonder expliciete verwijzing → 'degene die'.",
+    explanation: "<strong>DEGENE DIE</strong>: als er geen expliciet antecedent is maar je bedoelt een persoon, gebruik je 'degene die'. Formeel alternatief: <em>hij/zij die</em>."
+  },
+  {
+    cat: "WIE zonder antecedent",
+    sentence: "___ het weet, mag het zeggen.",
+    answer: "Wie",
+    options: ["Wie", "Die", "Wat", "Degene wat"],
+    hint: "Vrij relatief voornaamwoord zonder antecedent, voor personen.",
+    explanation: "<strong>WIE</strong> kan als vrij relatief pronomen fungeren zonder antecedent: '<u>Wie</u> het weet, mag het zeggen' = 'Degene die het weet'. Alleen voor personen."
+  },
+  {
+    cat: "WAAR + prepositie (van)",
+    sentence: "Het resultaat ___ ik het meest trots ben, is mijn scriptie.",
+    answer: "waarop",
+    options: ["waarop", "waarvan", "waarvoor", "waaraan"],
+    hint: "'Trots zijn op iets' → welke prepositie hoort bij 'trots zijn'?",
+    explanation: "<strong>WAAROP</strong>: 'trots zijn <em>op</em>' → 'het resultaat <u>waarop</u> ik trots ben'. Let altijd op welke prepositie bij het werkwoord of adjectief hoort."
+  },
+  {
+    cat: "DAT vs WAT — subtiel verschil",
+    sentence: "Hij deed iets ___ me verbaasde.",
+    answer: "wat",
+    options: ["wat", "dat", "die", "welk"],
+    hint: "'Iets' is een onbepaald voornaamwoord → welk relatief pronomen?",
+    explanation: "<strong>WAT</strong> na onbepaalde voornaamwoorden: 'iets <u>wat</u> me verbaasde'. Vergelijk: 'de daad <u>die</u> me verbaasde' (bepaald de-woord) / 'het gedrag <u>dat</u> me verbaasde' (bepaald het-woord)."
+  },
+  {
+    cat: "WAARDOOR",
+    sentence: "De storm ___ drie bomen omvielen, duurde de hele nacht.",
+    answer: "waardoor",
+    options: ["waardoor", "door die", "door dat", "waarvoor"],
+    hint: "'Door' + oorzaak/gevolg constructie.",
+    explanation: "<strong>WAARDOOR</strong>: 'de storm <u>waardoor</u> bomen omvielen'. 'Waardoor' drukt causaliteit uit. Vergelijk: 'de persoon <u>door wie</u> het gebeurde' (persoon)."
+  }
+];
+
+let shuffled = [];
+let current = 0;
+let score = 0;
+let answered = false;
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function startGame() {
+  shuffled = shuffle(questions);
+  current = 0; score = 0; answered = false;
+  document.getElementById('qtotal').textContent = shuffled.length;
+  document.getElementById('resultScreen').classList.remove('show');
+  document.getElementById('gameArea').style.display = '';
+  loadQuestion();
+}
+
+function loadQuestion() {
+  const q = shuffled[current];
+  answered = false;
+
+  document.getElementById('qnum').textContent = current + 1;
+  document.getElementById('score').textContent = score;
+  document.getElementById('progress').style.width = ((current / shuffled.length) * 100) + '%';
+  document.getElementById('category').textContent = q.cat;
+  document.getElementById('hintDisplay').textContent = '💡 ' + q.hint;
+  document.getElementById('nextBtn').disabled = true;
+  document.getElementById('feedback').className = 'feedback';
+  document.getElementById('feedback').innerHTML = '';
+
+  // Build sentence with blank
+  const blankHtml = `<span class="blank" id="blankSpan">___</span>`;
+  document.getElementById('sentenceDisplay').innerHTML = q.sentence.replace('___', blankHtml);
+
+  // Build options
+  const optGrid = document.getElementById('optionsGrid');
+  optGrid.innerHTML = '';
+  const letters = ['A', 'B', 'C', 'D'];
+  shuffle(q.options).forEach((opt, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opt-btn';
+    btn.innerHTML = `<span class="letter">${letters[i]}.</span>${opt}`;
+    btn.dataset.value = opt;
+    btn.onclick = () => selectAnswer(opt, q);
+    optGrid.appendChild(btn);
+  });
+}
+
+function selectAnswer(chosen, q) {
+  if (answered) return;
+  answered = true;
+
+  const blank = document.getElementById('blankSpan');
+  const fb = document.getElementById('feedback');
+  const btns = document.querySelectorAll('.opt-btn');
+  const correct = q.answer;
+
+  btns.forEach(btn => {
+    btn.disabled = true;
+    if (btn.dataset.value === correct) btn.classList.add('correct');
+    else if (btn.dataset.value === chosen && chosen !== correct) btn.classList.add('wrong');
+  });
+
+  if (chosen === correct) {
+    score++;
+    blank.textContent = chosen;
+    blank.classList.add('filled');
+    fb.className = 'feedback correct-fb show';
+    fb.innerHTML = `<strong>✓ CORRECT!</strong><br>${q.explanation}`;
+  } else {
+    blank.textContent = chosen;
+    blank.classList.add('wrong');
+    fb.className = 'feedback wrong-fb show';
+    fb.innerHTML = `<strong>✗ FOUT</strong> — Het juiste antwoord is <em>${correct}</em>.<br><br>${q.explanation}`;
+    // highlight correct
+    btns.forEach(btn => { if (btn.dataset.value === correct) btn.classList.add('reveal'); });
+  }
+
+  document.getElementById('score').textContent = score;
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= shuffled.length) showResult();
+  else loadQuestion();
+}
+
+function skipQuestion() {
+  if (!answered) {
+    current++;
+    if (current >= shuffled.length) showResult();
+    else loadQuestion();
+  } else nextQuestion();
+}
+
+function showResult() {
+  document.getElementById('gameArea').style.display = 'none';
+  const rs = document.getElementById('resultScreen');
+  rs.classList.add('show');
+  const pct = Math.round((score / shuffled.length) * 100);
+  document.getElementById('finalScore').textContent = `${score}/${shuffled.length}`;
+  document.getElementById('progress').style.width = '100%';
+
+  const msgs = [
+    [0, 40, "Oefen nog wat meer — je komt er wel! 💪"],
+    [40, 65, "Niet slecht! Nog een paar dingen om op te letten. 📖"],
+    [65, 85, "Goed gedaan! Je kent de basisregels goed. 🌟"],
+    [85, 101, "Uitstekend! Je beheerst de relativpronomen als een native. 🏆"]
+  ];
+  const msg = msgs.find(([lo, hi]) => pct >= lo && pct < hi);
+  document.getElementById('finalMsg').textContent = msg ? msg[2] : '';
+}
+
+function restartGame() { startGame(); }
+
+startGame();
+</script>
+</body>
+</html>
