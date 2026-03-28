@@ -1,0 +1,265 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+#app { padding: 1.5rem 0; }
+.header { margin-bottom: 1.5rem; }
+.header h1 { font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px; }
+.header p { font-size: 14px; color: var(--color-text-secondary); }
+.stats { display: flex; gap: 12px; margin-bottom: 1.5rem; flex-wrap: wrap; }
+.stat { background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 10px 16px; min-width: 80px; }
+.stat-label { font-size: 12px; color: var(--color-text-secondary); margin-bottom: 2px; }
+.stat-value { font-size: 20px; font-weight: 500; color: var(--color-text-primary); }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem; margin-bottom: 1rem; transition: border-color 0.2s; }
+.card.correct { border-color: #1D9E75; background: #E1F5EE; }
+.card.wrong { border-color: #E24B4A; background: #FCEBEB; }
+.card.skipped { border-color: #888780; }
+.sentence { font-size: 16px; line-height: 1.8; color: var(--color-text-primary); margin-bottom: 8px; }
+.de-meaning { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 12px; font-style: italic; }
+.input-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.prep-input { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 12px; font-size: 15px; width: 120px; font-family: var(--font-sans); background: var(--color-background-primary); color: var(--color-text-primary); outline: none; }
+.prep-input:focus { box-shadow: 0 0 0 2px #378ADD44; border-color: #378ADD; }
+.prep-input:disabled { opacity: 0.6; }
+.btn { border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); padding: 6px 14px; font-size: 14px; cursor: pointer; font-family: var(--font-sans); background: transparent; color: var(--color-text-primary); transition: background 0.15s, transform 0.1s; }
+.btn:hover { background: var(--color-background-secondary); }
+.btn:active { transform: scale(0.98); }
+.btn-check { border-color: #185FA5; color: #185FA5; }
+.btn-check:hover { background: #E6F1FB; }
+.btn-skip { color: var(--color-text-secondary); }
+.feedback { font-size: 13px; font-weight: 500; margin-top: 8px; }
+.feedback.ok { color: #0F6E56; }
+.feedback.err { color: #993C1D; }
+.answer-reveal { font-size: 13px; color: var(--color-text-secondary); margin-top: 4px; }
+.answer-reveal strong { color: var(--color-text-primary); }
+.blank { display: inline-block; border-bottom: 2px solid #378ADD; min-width: 60px; text-align: center; font-weight: 500; color: #185FA5; padding: 0 4px; }
+.progress-bar { height: 4px; background: var(--color-background-secondary); border-radius: 4px; margin-bottom: 1.5rem; overflow: hidden; }
+.progress-fill { height: 100%; background: #1D9E75; border-radius: 4px; transition: width 0.4s; }
+.finish-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 2rem; text-align: center; }
+.finish-card h2 { font-size: 22px; font-weight: 500; margin-bottom: 8px; }
+.finish-card p { color: var(--color-text-secondary); margin-bottom: 1.5rem; }
+.score-big { font-size: 48px; font-weight: 500; color: #1D9E75; margin: 1rem 0; }
+.badge { display: inline-block; padding: 4px 12px; border-radius: var(--border-radius-md); font-size: 12px; font-weight: 500; background: #E1F5EE; color: #085041; margin-bottom: 1rem; }
+.hint-btn { font-size: 12px; color: #378ADD; cursor: pointer; border: none; background: none; font-family: var(--font-sans); text-decoration: underline; padding: 0; }
+.hint-text { font-size: 12px; color: #185FA5; margin-top: 4px; font-style: italic; }
+</style>
+
+<div id="app"></div>
+
+<script>
+const allData = [
+  {verb:"zich abonneren", prep:"op", de:"abonnieren auf", ex:"Ik heb me geabonneerd ___ de lokale krant."},
+  {verb:"afhankelijk zijn", prep:"van", de:"abhängig sein von", ex:"Hij is financieel afhankelijk ___ zijn ouders."},
+  {verb:"antwoord geven", prep:"op", de:"antworten auf", ex:"Kun jij antwoord geven ___ die vraag?"},
+  {verb:"bang zijn", prep:"voor", de:"Angst haben vor", ex:"Ben je bang ___ spinnen?"},
+  {verb:"beginnen", prep:"met", de:"anfangen mit", ex:"Zullen we beginnen ___ de les?"},
+  {verb:"zich bemoeien", prep:"met", de:"sich einmischen in", ex:"Zijn ouders bemoeien zich altijd ___ zijn huiswerk."},
+  {verb:"bezig zijn", prep:"met", de:"beschäftigt sein mit", ex:"Ze zijn druk bezig ___ het kerstdiner."},
+  {verb:"bezorgd zijn", prep:"over", de:"besorgt sein über", ex:"Hij is bezorgd ___ de slechte situatie in zijn land."},
+  {verb:"bezuinigen", prep:"op", de:"sparen bei / kürzen bei", ex:"De regering wil bezuinigen ___ kunst en cultuur."},
+  {verb:"boos zijn", prep:"op", de:"böse sein auf", ex:"Ze is boos ___ haar vriend, want hij is te laat."},
+  {verb:"zich concentreren", prep:"op", de:"sich konzentrieren auf", ex:"Ik moet me goed concentreren ___ deze tekst."},
+  {verb:"deelnemen", prep:"aan", de:"teilnehmen an", ex:"Hij neemt deel ___ een zomerschool in Utrecht."},
+  {verb:"denken", prep:"aan", de:"denken an", ex:"We denken vaak ___ onze familie."},
+  {verb:"discussiëren", prep:"over", de:"diskutieren über", ex:"Zij discussiëren thuis vaak ___ politiek."},
+  {verb:"het eens zijn", prep:"met", de:"einverstanden sein mit", ex:"Ik ben het niet ___ je eens!"},
+  {verb:"zich ergeren", prep:"aan", de:"sich ärgern über", ex:"Hij ergert zich ___ mensen die lawaai maken."},
+  {verb:"ervaring hebben", prep:"met", de:"Erfahrung haben mit", ex:"Ik zie dat je veel ervaring hebt ___ dit werk."},
+  {verb:"feliciteren", prep:"met", de:"gratulieren zu", ex:"Gefeliciteerd ___ jullie trouwdag!"},
+  {verb:"gebruik maken", prep:"van", de:"Gebrauch machen von", ex:"Kan ik gebruik maken ___ jullie toilet?"},
+  {verb:"geïnteresseerd zijn", prep:"in", de:"interessiert sein an", ex:"Hij is erg geïnteresseerd ___ fotografie."},
+  {verb:"gek zijn", prep:"op", de:"verrückt sein nach", ex:"Ze is echt gek ___ haar vriend."},
+  {verb:"geld overmaken", prep:"naar", de:"Geld überweisen an", ex:"Je kunt het geld overmaken ___ onze rekening."},
+  {verb:"geld uitgeven", prep:"aan", de:"Geld ausgeben für", ex:"Hij geeft veel geld uit ___ muziek."},
+  {verb:"genieten", prep:"van", de:"genießen / sich freuen über", ex:"Ze genieten ___ de vakantie."},
+  {verb:"een hekel hebben", prep:"aan", de:"nicht mögen / hassen", ex:"Ze heeft een hekel ___ mensen die te laat komen."},
+  {verb:"op de hoogte zijn", prep:"van", de:"informiert sein über", ex:"Hij is op de hoogte ___ het laatste nieuws."},
+  {verb:"zich houden", prep:"aan", de:"sich halten an", ex:"Zij houdt zich altijd ___ haar afspraken."},
+  {verb:"houden", prep:"van", de:"lieben / mögen", ex:"Ik hou ___ jou!"},
+  {verb:"informeren", prep:"naar", de:"fragen nach / sich erkundigen nach", ex:"Ik wilde graag informeren ___ de openingstijden."},
+  {verb:"zich inschrijven", prep:"voor", de:"sich anmelden für", ex:"Kan ik me inschrijven ___ een cursus Japans?"},
+  {verb:"invloed hebben", prep:"op", de:"Einfluss haben auf", ex:"Het weer heeft veel invloed ___ zijn humeur."},
+  {verb:"kennismaken", prep:"met", de:"kennenlernen", ex:"Zullen we kennismaken ___ de nieuwe buren?"},
+  {verb:"kijken", prep:"naar", de:"schauen auf / anschauen", ex:"Kijk je weleens ___ een soapserie op televisie?"},
+  {verb:"kritiek hebben", prep:"op", de:"Kritik üben an", ex:"De mensen hebben veel kritiek ___ zijn ideeën."},
+  {verb:"lachen", prep:"om", de:"lachen über", ex:"De kinderen lachen ___ de grapjes van de clown."},
+  {verb:"lijken", prep:"op", de:"ähneln / aussehen wie", ex:"Je lijkt echt ___ je moeder."},
+  {verb:"luisteren", prep:"naar", de:"zuhören / hören auf", ex:"Hij luistert nooit ___ zijn ouders."},
+  {verb:"meedoen", prep:"met", de:"mitmachen bei", ex:"Wil je meedoen ___ ons spel?"},
+  {verb:"nadenken", prep:"over", de:"nachdenken über", ex:"Heb je al ___ mijn voorstel nagedacht?"},
+  {verb:"praten", prep:"over", de:"reden über", ex:"Hij praat nooit ___ zijn problemen."},
+  {verb:"reageren", prep:"op", de:"reagieren auf", ex:"Kun je even reageren ___ die e-mail?"},
+  {verb:"rekening houden", prep:"met", de:"Rücksicht nehmen auf", ex:"Hij houdt nooit rekening ___ haar gevoelens."},
+  {verb:"respect hebben", prep:"voor", de:"Respekt haben vor", ex:"Kinderen moeten respect hebben ___ hun docent."},
+  {verb:"samenwerken", prep:"met", de:"zusammenarbeiten mit", ex:"We willen ___ internationale bedrijven samenwerken."},
+  {verb:"zich schamen", prep:"voor", de:"sich schämen für", ex:"Zij schaamt zich ___ haar fouten."},
+  {verb:"schrikken", prep:"van", de:"erschrecken von", ex:"We zijn erg geschrokken ___ het slechte nieuws."},
+  {verb:"solliciteren", prep:"naar", de:"sich bewerben auf", ex:"Ik heb gesolliciteerd ___ een nieuwe functie."},
+  {verb:"slagen", prep:"voor", de:"bestehen (Prüfung)", ex:"Hij is geslaagd ___ zijn rijexamen."},
+  {verb:"slecht zijn", prep:"in", de:"schlecht sein in", ex:"Ik ben erg slecht ___ het onthouden van namen."},
+  {verb:"sparen", prep:"voor", de:"sparen für", ex:"Zij heeft lang gespaard ___ een goede gitaar."},
+  {verb:"spijt hebben", prep:"van", de:"bereuen / leid tun", ex:"Zij heeft spijt ___ haar studiekeuze."},
+  {verb:"stemmen", prep:"op", de:"wählen / abstimmen für", ex:"Op wie ga jij ___ bij de volgende verkiezingen?"},
+  {verb:"stoppen", prep:"met", de:"aufhören mit", ex:"Hij is gestopt ___ zijn muzieklessen."},
+  {verb:"tevreden zijn", prep:"met", de:"zufrieden sein mit", ex:"Ben je tevreden ___ je salaris?"},
+  {verb:"trek hebben", prep:"in", de:"Lust haben auf", ex:"Ik heb trek ___ een kroket!"},
+  {verb:"trots zijn", prep:"op", de:"stolz sein auf", ex:"Ik ben zo trots ___ je!"},
+  {verb:"trouwen", prep:"met", de:"heiraten", ex:"Hij is getrouwd ___ zijn jeugdliefde."},
+  {verb:"verantwoordelijk zijn", prep:"voor", de:"verantwortlich sein für", ex:"Vandaag ben jij verantwoordelijk ___ dat werk."},
+  {verb:"zich verbazen", prep:"over", de:"sich wundern über", ex:"Zij verbaast zich ___ de voorzetsels in het Nederlands."},
+  {verb:"vergelijken", prep:"met", de:"vergleichen mit", ex:"Dat is appels ___ peren vergelijken."},
+  {verb:"zich vergissen", prep:"in", de:"sich irren in", ex:"Hij heeft zich vergist ___ de datum."},
+  {verb:"zich verheugen", prep:"op", de:"sich freuen auf", ex:"Ik verheug me ___ Kerstmis met mijn familie."},
+  {verb:"verlangen", prep:"naar", de:"sich sehnen nach", ex:"Verlang jij ook zo ___ een kop warme chocolademelk?"},
+  {verb:"verliefd zijn", prep:"op", de:"verliebt sein in", ex:"Ik ben verliefd ___ je."},
+  {verb:"verliezen", prep:"van", de:"verlieren gegen", ex:"Als we tennissen, verlies ik altijd ___ jou."},
+  {verb:"verslaafd zijn", prep:"aan", de:"süchtig sein nach", ex:"Hij is verslaafd ___ gamen."},
+  {verb:"verstand hebben", prep:"van", de:"Ahnung haben von", ex:"Heb jij verstand ___ computers?"},
+  {verb:"vluchten", prep:"voor", de:"flüchten vor", ex:"Zij zijn gevlucht ___ de oorlog."},
+  {verb:"zich voorbereiden", prep:"op", de:"sich vorbereiten auf", ex:"Heb jij je goed voorbereid ___ de test?"},
+  {verb:"een vraag stellen", prep:"over", de:"eine Frage stellen über", ex:"Mag ik een vraag stellen ___ oefening 6?"},
+  {verb:"waarschuwen", prep:"voor", de:"warnen vor", ex:"De weerman heeft gewaarschuwd ___ mist op de weg."},
+  {verb:"wachten", prep:"op", de:"warten auf", ex:"Ik wacht hier ___ je."},
+  {verb:"wennen", prep:"aan", de:"sich gewöhnen an", ex:"Zij kan niet wennen ___ het gebruik van een agenda."},
+  {verb:"zin hebben", prep:"in", de:"Lust haben auf", ex:"Heb je zin ___ een ijsje?"},
+  {verb:"zich zorgen maken", prep:"over", de:"sich Sorgen machen über", ex:"Ik maak me zorgen ___ zijn schoolprestaties."},
+  {verb:"zorgen", prep:"voor", de:"sorgen für", ex:"Wil je tijdens mijn vakantie ___ de planten zorgen?"}
+];
+
+const BATCH = 10;
+let queue = [];
+let current = 0;
+let correct = 0;
+let wrong = 0;
+let skipped = 0;
+let states = [];
+let showHints = [];
+
+function shuffle(arr) {
+  let a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startGame() {
+  queue = shuffle(allData).slice(0, BATCH);
+  current = 0; correct = 0; wrong = 0; skipped = 0;
+  states = queue.map(() => ({status: 'pending', input: '', hint: false}));
+  render();
+}
+
+function render() {
+  const app = document.getElementById('app');
+  if (current >= queue.length) {
+    renderFinish(app);
+    return;
+  }
+  
+  const total = queue.length;
+  const done = current;
+  
+  let html = `<div class="header"><h1>Vul het voorzetsel in</h1><p>Werkwoorden met vast voorzetsel — typ het juiste voorzetsel in de lege plek.</p></div>`;
+  html += `<div class="progress-bar"><div class="progress-fill" style="width:${(done/total)*100}%"></div></div>`;
+  html += `<div class="stats">
+    <div class="stat"><div class="stat-label">Vraag</div><div class="stat-value">${done+1}/${total}</div></div>
+    <div class="stat"><div class="stat-label">Goed</div><div class="stat-value" style="color:#1D9E75">${correct}</div></div>
+    <div class="stat"><div class="stat-label">Fout</div><div class="stat-value" style="color:#E24B4A">${wrong}</div></div>
+  </div>`;
+
+  const item = queue[current];
+  const st = states[current];
+  const sentenceHTML = item.ex.replace('___', `<span class="blank">${st.status !== 'pending' ? item.prep : '___'}</span>`);
+  
+  let cardClass = 'card';
+  if (st.status === 'correct') cardClass += ' correct';
+  else if (st.status === 'wrong') cardClass += ' wrong';
+  else if (st.status === 'skipped') cardClass += ' skipped';
+
+  html += `<div class="${cardClass}">
+    <div class="sentence">${sentenceHTML}</div>
+    <div class="de-meaning">🇩🇪 <strong>${item.verb}</strong> = ${item.de}</div>`;
+  
+  if (st.status === 'pending') {
+    html += `<div class="input-row">
+      <input class="prep-input" id="answerInput" type="text" placeholder="voorzetsel..." value="${st.input}" autocomplete="off" autocorrect="off" spellcheck="false"/>
+      <button class="btn btn-check" onclick="checkAnswer()">Controleren ✓</button>
+      <button class="btn btn-skip" onclick="skipQuestion()">Overslaan →</button>
+    </div>`;
+    if (st.hint) {
+      html += `<div class="hint-text">Tip: begint met "${item.prep[0]}"</div>`;
+    } else {
+      html += `<button class="hint-btn" onclick="showHint()">Tip tonen</button>`;
+    }
+  } else if (st.status === 'correct') {
+    html += `<div class="feedback ok">✓ Correct! Goed gedaan!</div>`;
+    html += `<button class="btn" onclick="nextQuestion()" style="margin-top:12px">Volgende vraag →</button>`;
+  } else if (st.status === 'wrong') {
+    html += `<div class="feedback err">✗ Helaas! Het juiste voorzetsel is: <strong>${item.prep}</strong></div>`;
+    html += `<div class="answer-reveal">Voorbeeld: ${item.ex.replace('___', '<strong>'+item.prep+'</strong>')}</div>`;
+    html += `<button class="btn" onclick="nextQuestion()" style="margin-top:12px">Volgende vraag →</button>`;
+  } else if (st.status === 'skipped') {
+    html += `<div class="feedback" style="color:var(--color-text-secondary)">Overgeslagen. Het antwoord was: <strong>${item.prep}</strong></div>`;
+    html += `<button class="btn" onclick="nextQuestion()" style="margin-top:12px">Volgende vraag →</button>`;
+  }
+  
+  html += `</div>`;
+  app.innerHTML = html;
+  
+  if (st.status === 'pending') {
+    const inp = document.getElementById('answerInput');
+    if (inp) {
+      inp.focus();
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') checkAnswer(); });
+      inp.addEventListener('input', e => { states[current].input = e.target.value; });
+    }
+  }
+}
+
+function renderFinish(app) {
+  const pct = Math.round((correct / queue.length) * 100);
+  let badge = pct >= 90 ? '🏆 Uitstekend!' : pct >= 70 ? '👍 Goed gedaan!' : pct >= 50 ? '📚 Blijf oefenen!' : '💪 Volhouden!';
+  app.innerHTML = `<div class="finish-card">
+    <div class="badge">${badge}</div>
+    <h2>Klaar!</h2>
+    <div class="score-big">${correct}/${queue.length}</div>
+    <p>${pct}% goed — ${correct} goed, ${wrong} fout, ${skipped} overgeslagen</p>
+    <button class="btn btn-check" onclick="startGame()" style="font-size:15px; padding: 8px 20px;">Opnieuw spelen ↻</button>
+  </div>`;
+}
+
+function checkAnswer() {
+  const inp = document.getElementById('answerInput');
+  if (!inp) return;
+  const val = inp.value.trim().toLowerCase();
+  if (!val) return;
+  const item = queue[current];
+  if (val === item.prep.toLowerCase()) {
+    states[current].status = 'correct';
+    correct++;
+  } else {
+    states[current].status = 'wrong';
+    wrong++;
+  }
+  render();
+}
+
+function skipQuestion() {
+  states[current].status = 'skipped';
+  skipped++;
+  render();
+}
+
+function nextQuestion() {
+  current++;
+  render();
+}
+
+function showHint() {
+  states[current].hint = true;
+  render();
+}
+
+startGame();
+</script>
